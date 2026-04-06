@@ -1,0 +1,63 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with gems, XP, and streak info",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "gems": { "type": "integer" },
+        "xp": { "type": "integer" },
+        "streakCount": { "type": "integer" },
+        "lastActiveDate": { "type": "string", "format": "date" },
+        "isChampion": { "type": "boolean" },
+        "callistaFreePeriodStart": { "type": "string", "format": "date-time" },
+        "callistaPaidUntil": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "gems", "xp"]
+    },
+    "ChatHistory": {
+      "title": "ChatHistory",
+      "description": "History of AI chats with Callista",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "topic": { "type": "string" },
+        "lastMessage": { "type": "string" },
+        "messages": { "type": "array" }
+      },
+      "required": ["userId", "timestamp", "topic"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "User review with rating and text",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "userPhoto": { "type": "string" },
+        "rating": { "type": "integer" },
+        "comment": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "rating", "comment", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile document"
+    },
+    "/chats/{chatId}": {
+      "schema": "ChatHistory",
+      "description": "AI chat history document"
+    },
+    "/reviews/{reviewId}": {
+      "schema": "Review",
+      "description": "User review document"
+    }
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "name": "Callista Learning",
+  "description": "A premium AI-powered learning companion that simplifies complex topics through creative analogies, interactive study tools, and gamified modules.",
+  "requestFramePermissions": ["microphone"]
+}

@@ -1,0 +1,104 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: userId (uid)
+    // Fields:
+    //   - uid: string (required)
+    //   - displayName: string (optional)
+    //   - email: string (optional)
+    //   - gems: number (required)
+    //   - xp: number (required)
+    //   - streakCount: number (optional)
+    //   - lastActiveDate: string (optional, YYYY-MM-DD)
+    //   - isChampion: bool (optional)
+    //   - callistaFreePeriodStart: timestamp (optional)
+    //   - callistaPaidUntil: timestamp (optional)
+    //
+    // Collection: chats
+    // Document ID: chatId
+    // Fields:
+    //   - userId: string (required)
+    //   - timestamp: timestamp (required)
+    //   - topic: string (required)
+    //   - lastMessage: string (required)
+    //   - messages: list (required)
+    //
+    // Collection: reviews
+    // Document ID: reviewId
+    // Fields:
+    //   - userId: string (required)
+    //   - userName: string (optional)
+    //   - userPhoto: string (optional)
+    //   - rating: number (required)
+    //   - comment: string (required)
+    //   - timestamp: timestamp (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'gems', 'xp']) &&
+             data.uid is string &&
+             data.gems is number &&
+             data.xp is number &&
+             (!('isChampion' in data) || data.isChampion is bool) &&
+             (!('streakCount' in data) || data.streakCount is number);
+    }
+
+    function isValidChat(data) {
+      return data.keys().hasAll(['userId', 'timestamp', 'topic', 'lastMessage', 'messages']) &&
+             data.userId is string &&
+             data.timestamp is timestamp &&
+             data.topic is string &&
+             data.lastMessage is string &&
+             data.messages is list;
+    }
+
+    function isValidReview(data) {
+      return data.keys().hasAll(['userId', 'rating', 'comment', 'timestamp']) &&
+             data.userId is string &&
+             data.rating is number && data.rating >= 1 && data.rating <= 5 &&
+             data.comment is string && data.comment.size() > 0 && data.comment.size() <= 1000 &&
+             data.timestamp is timestamp;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isAuthenticated(); // Allow reading other users for leaderboard
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isOwner(userId) && isValidUser(request.resource.data);
+    }
+
+    match /chats/{chatId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid && isValidChat(request.resource.data);
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid && isValidChat(request.resource.data);
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid && isValidReview(request.resource.data);
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid && isValidReview(request.resource.data);
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+  }
+}

@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+@theme {
+  --color-beige-50: #fdfcf9;
+  --color-beige-100: #f2ede4;
+  --color-beige-200: #e5dcc9;
+  --color-beige-300: #d1c4a8;
+  --color-beige-400: #b8a888;
+  --color-beige-500: #9e8e6e;
+  --color-beige-600: #857555;
+  --color-beige-700: #6b5d3c;
+  --color-beige-800: #524623;
+  --color-beige-900: #38301a;
+  
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", serif;
+  
+  @keyframes sheen {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  @keyframes soft-fade {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.1); }
+  }
+
+  --animate-soft-fade: soft-fade 6s ease-in-out infinite;
+}
+
+@utility sheen-text {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.9) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: sheen 4s infinite linear;
+}
+
+@utility soft-bg-gradient {
+  background: linear-gradient(135deg, #e8e1d1 0%, #fdfcf9 100%);
+}
+
+.markdown-body {
+  @apply text-sm leading-relaxed;
+}
+
+.markdown-body p {
+  @apply mb-4 last:mb-0;
+}
+
+.markdown-body strong {
+  @apply font-bold text-beige-900;
+}
+
+.markdown-body ul, .markdown-body ol {
+  @apply mb-4 ml-4 list-outside;
+}
+
+.markdown-body ul {
+  @apply list-disc;
+}
+
+.markdown-body ol {
+  @apply list-decimal;
+}
+
+.markdown-body li {
+  @apply mb-1;
+}
+
+.markdown-body h1, .markdown-body h2, .markdown-body h3 {
+  @apply font-serif font-bold text-beige-900 mt-6 mb-3 first:mt-0;
+}
+
+.markdown-body h1 { @apply text-xl; }
+.markdown-body h2 { @apply text-lg; }
+.markdown-body h3 { @apply text-base; }
+
+.markdown-body blockquote {
+  @apply border-l-4 border-beige-200 pl-4 italic text-beige-600 my-4;
+}
+
+.markdown-body code {
+  @apply bg-beige-100 px-1.5 py-0.5 rounded text-[0.9em] font-mono text-beige-800;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
